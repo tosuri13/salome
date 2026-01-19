@@ -1,0 +1,21 @@
+[project]
+name = "salome-workspace"
+version = "1.0.0"
+readme = "README.md"
+requires-python = ">=3.14"
+
+[tool.uv.sources]
+salome = { workspace = true }
+
+[tool.uv.workspace]
+members = [
+    "apps",
+    "libs/salome", 
+    "libs/salome-cdk",
+]
+
+[tool.ruff.lint]
+unfixable = [
+    "F401", # unused import
+    "F841", # unused variable
+]
