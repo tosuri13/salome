@@ -12,6 +12,7 @@ members = [
     "apps",
     "libs/salome", 
     "libs/salome-cdk",
+    "libs/salome-tool"
 ]
 
 [tool.ruff.lint]
