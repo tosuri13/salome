@@ -19,18 +19,18 @@ sns_client = SNSClient()
 
 @app.post("/webhook")
 async def post_webhook(request: Request):
-    raw_body = await request.body()
+    rawbody = await request.body()
     headers = request.headers
 
     if not verify_key(
-        raw_body,
-        headers["x_signature_ed25519"],
-        headers["x_signature_timestamp"],
+        rawbody,
+        headers["x-signature-ed25519"],
+        headers["x-signature-timestamp"],
         DISCORD_PUBLIC_KEY,
     ):
         raise HTTPException(status_code=401)
 
-    body = json.loads(raw_body)
+    body = json.loads(rawbody)
     interaction_type: int = body["type"]
 
     if interaction_type == InteractionType.PING:
@@ -42,7 +42,7 @@ async def post_webhook(request: Request):
         if command := body["data"].get("name"):
             sns_client.publish(
                 topic_arn=SERVER_INTERACT_TOPIC_ARN,
-                message=raw_body.decode(),
+                message=rawbody.decode(),
                 message_attributes={
                     "command": {
                         "DataType": "String",
