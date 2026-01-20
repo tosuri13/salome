@@ -266,6 +266,18 @@ wheels = [
 ]
 
 [[package]]
+name = "discord-interactions"
+version = "0.4.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pynacl" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9f/61/0fb857ffcbc9a0a946caf0a50874f80ba98798ca583ba59f7f34e22912c0/discord-interactions-0.4.0.tar.gz", hash = "sha256:41bd0289a6460437c7382ec56d99ee604e8cb15259f2d831ae1d248709f8bcb2", size = 3491, upload-time = "2022-05-17T16:23:51.826Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/de/ef/21bb4be7e589c038bd0d73b6be53e045daaf785b4cbb6c6db3dabab810ad/discord_interactions-0.4.0-py3-none-any.whl", hash = "sha256:bc8dcac17873a5bf0b065967b109fabf626a02fe21226369a13e1ee2a6bcd833", size = 3721, upload-time = "2022-05-17T16:23:53.616Z" },
+]
+
+[[package]]
 name = "faiss-cpu"
 version = "1.13.2"
 source = { registry = "https://pypi.org/simple" }
@@ -564,6 +576,7 @@ version = "1.0.0"
 source = { editable = "libs/salome" }
 dependencies = [
     { name = "boto3" },
+    { name = "discord-interactions" },
     { name = "faiss-cpu" },
     { name = "numpy" },
     { name = "pynacl" },
@@ -578,6 +591,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "boto3", specifier = ">=1.42.30" },
+    { name = "discord-interactions", specifier = ">=0.4.0" },
     { name = "faiss-cpu", specifier = ">=1.13.2" },
     { name = "numpy", specifier = ">=2.4.1" },
     { name = "pynacl", specifier = ">=1.6.2" },

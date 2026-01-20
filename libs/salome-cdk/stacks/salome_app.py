@@ -1,14 +1,30 @@
+import os
+
 import aws_cdk as cdk
 from aws_cdk import Stack
 from aws_cdk import aws_apigateway as apigw
 from aws_cdk import aws_iam as iam
 from aws_cdk import aws_lambda as _lambda
+from aws_cdk import aws_sns as sns
+from aws_cdk import aws_sns_subscriptions as sns_subscriptions
 from constructs import Construct
+
+DISCORD_APPLICATION_ID = os.environ["DISCORD_APPLICATION_ID"]
+DISCORD_BOT_TOKEN = os.environ["DISCORD_BOT_TOKEN"]
+DISCORD_PUBLIC_KEY = os.environ["DISCORD_PUBLIC_KEY"]
 
 
 class SalomeAppStack(Stack):
     def __init__(self, scope: Construct, id: str, **kwargs):
         super().__init__(scope, id, **kwargs)
+
+        # 🐧 SNS Topics 🐧
+
+        salome_server_interact_topic = sns.Topic(
+            self,
+            "SalomeServerInteractTopic",
+            topic_name="salome-server-interact-topic",
+        )
 
         # 🐧 IAM Roles 🐧
 
@@ -22,6 +38,7 @@ class SalomeAppStack(Stack):
                 )
             ],
         )
+        salome_server_interact_topic.grant_publish(salome_function_role)
 
         # 🐧 Lambda Functions 🐧
 
@@ -36,6 +53,37 @@ class SalomeAppStack(Stack):
             function_name="salome-api-function",
             role=salome_function_role,  # type: ignore
             timeout=cdk.Duration.minutes(5),
+            environment={
+                "DISCORD_PUBLIC_KEY": DISCORD_PUBLIC_KEY,
+                "SERVER_INTERACT_TOPIC_ARN": salome_server_interact_topic.topic_arn,
+            },
+        )
+
+        salome_server_interact_ask_function = _lambda.DockerImageFunction(
+            self,
+            "SalomeServerInteractAskFunction",
+            code=_lambda.DockerImageCode.from_image_asset(
+                directory="../..",
+                cmd=["functions.server.interact.ask.function.handler"],
+            ),
+            architecture=_lambda.Architecture.ARM_64,
+            function_name="salome-server-interact-ask-function",
+            role=salome_function_role,  # type: ignore
+            timeout=cdk.Duration.minutes(5),
+            environment={
+                "DISCORD_APPLICATION_ID": DISCORD_APPLICATION_ID,
+                "DISCORD_BOT_TOKEN": DISCORD_BOT_TOKEN,
+            },
+        )
+        salome_server_interact_topic.add_subscription(
+            sns_subscriptions.LambdaSubscription(
+                salome_server_interact_ask_function,  # type: ignore
+                filter_policy={
+                    "command": sns.SubscriptionFilter.string_filter(
+                        allowlist=["ask"],
+                    ),
+                },
+            )
         )
 
         # 🐧 API Gateway & Integration 🐧
