@@ -2,3 +2,9 @@
 name = "salome-tool"
 version = "1.0.0"
 requires-python = ">=3.14"
+
+[dependency-groups]
+dev = [
+    "questionary>=2.1.1",
+    "rich>=14.2.0",
+]
