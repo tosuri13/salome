@@ -33,29 +33,29 @@ async def post_webhook(request: Request):
     body = json.loads(rawbody)
     interaction_type: int = body["type"]
 
-    if interaction_type == InteractionType.PING:
-        return {
-            "type": InteractionResponseType.PONG,
-        }
+    match interaction_type:
+        case InteractionType.PING:
+            return {
+                "type": InteractionResponseType.PONG,
+            }
+        case InteractionType.APPLICATION_COMMAND:
+            if command := body["data"].get("name"):
+                sns_client.publish(
+                    topic_arn=SERVER_INTERACT_TOPIC_ARN,
+                    message=rawbody.decode(),
+                    message_attributes={
+                        "command": {
+                            "DataType": "String",
+                            "StringValue": command,
+                        }
+                    },
+                )
 
-    if interaction_type == InteractionType.APPLICATION_COMMAND:
-        if command := body["data"].get("name"):
-            sns_client.publish(
-                topic_arn=SERVER_INTERACT_TOPIC_ARN,
-                message=rawbody.decode(),
-                message_attributes={
-                    "command": {
-                        "DataType": "String",
-                        "StringValue": command,
-                    }
-                },
-            )
-
-        return {
-            "type": InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
-        }
-
-    raise HTTPException(status_code=400, detail="Unknown interaction type")
+            return {
+                "type": InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+            }
+        case _:
+            raise HTTPException(status_code=400)
 
 
 handler = Mangum(app)
