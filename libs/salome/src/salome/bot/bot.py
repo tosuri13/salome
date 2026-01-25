@@ -1,11 +1,9 @@
 from salome.bot.handlers.ask import AskCommandHandler
-
-
-class SalomeBotHandler:
-    def __init__(self, bot: SalomeBot):
-        self.bot = bot
+from salome.utils.discord import DiscordClient
 
 
 class SalomeBot:
-    def __init__(self):
+    def __init__(self, client: DiscordClient):
+        self.client = client
+
         self.ask = AskCommandHandler(self)

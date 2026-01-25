@@ -1,6 +1,3 @@
-from .bot import SalomeBot, SalomeBotHandler
+from .bot import SalomeBot
 
-__all__ = [
-    "SalomeBot",
-    "SalomeBotHandler",
-]
+__all__ = ["SalomeBot"]

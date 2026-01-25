@@ -79,6 +79,22 @@ wheels = [
 ]
 
 [[package]]
+name = "aws-cdk-aws-bedrock-alpha"
+version = "2.236.0a0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "aws-cdk-lib" },
+    { name = "constructs" },
+    { name = "jsii" },
+    { name = "publication" },
+    { name = "typeguard" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6b/7a/23442719f866fb53212c1ab78e0fbc2e542104ce5c657f89685680e6f3a9/aws_cdk_aws_bedrock_alpha-2.236.0a0.tar.gz", hash = "sha256:ea5265183d3612293388e2b5f9909576362a20f45b48685e9891a5096e2e20e8", size = 644657, upload-time = "2026-01-23T17:39:05.089Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/04/ea/39496dc235371547b9c4b671425b7973deed5bf8ead2f8895a85f5c1ab43/aws_cdk_aws_bedrock_alpha-2.236.0a0-py3-none-any.whl", hash = "sha256:2c064d9ab88beda5a0f8dad88feb694dfdafd48e10320f5d4ab4c34bf19a0609", size = 614013, upload-time = "2026-01-23T17:38:01.26Z" },
+]
+
+[[package]]
 name = "aws-cdk-cloud-assembly-schema"
 version = "48.20.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1061,6 +1077,7 @@ source = { virtual = "libs/salome-cdk" }
 
 [package.dev-dependencies]
 dev = [
+    { name = "aws-cdk-aws-bedrock-alpha" },
     { name = "aws-cdk-lib" },
     { name = "constructs" },
 ]
@@ -1069,6 +1086,7 @@ dev = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "aws-cdk-aws-bedrock-alpha", specifier = ">=2.236.0a0" },
     { name = "aws-cdk-lib", specifier = ">=2.235.0" },
     { name = "constructs", specifier = ">=10.4.5" },
 ]

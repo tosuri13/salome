@@ -1,16 +1,32 @@
-from typing import TypedDict
+from typing import Any
 
 from salome.agents import SalomeAskAgent
-from salome.bot import SalomeBotHandler
+from salome.bot.handlers import CommandHandler
+from salome.utils.discord import CommandOptionType
 
 
-class AskCommandOptions(TypedDict):
-    question: str
+class AskCommandHandler(CommandHandler):
+    option = {
+        "name": "ask",
+        "description": "何でも聞きたいことを質問してみよう!!",
+        "options": [
+            {
+                "name": "question",
+                "description": "質問",
+                "required": True,
+                "type": CommandOptionType.STRING,
+            }
+        ],
+    }
 
+    def __call__(self, message: dict[str, Any]) -> None:
+        options = self.parse_options(message)
+        interaction_token = message["token"]
 
-class AskCommandHandler(SalomeBotHandler):
-    def __call__(self, options: AskCommandOptions) -> str:
         agent = SalomeAskAgent()
         result = agent.run(options["question"])
 
-        return result.answer
+        self.bot.client.send_followup_message(
+            interaction_token=interaction_token,
+            content=result.answer,
+        )

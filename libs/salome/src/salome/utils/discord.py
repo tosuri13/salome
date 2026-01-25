@@ -58,3 +58,7 @@ class DiscordClient:
 
         if response.status_code != 204:
             raise ValueError(f"Discord API failed: {response.text}")
+
+
+class CommandOptionType:
+    STRING = 3
