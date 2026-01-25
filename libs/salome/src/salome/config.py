@@ -1,3 +1,5 @@
 class Config:
     DEFAULT_REGION_NAME = "ap-northeast-1"
     DEFAULT_MODEL_ID = "deepseek.v3-v1:0"
+    DEFAULT_MODEL_IPPT = 0.000701666
+    DEFAULT_MODEL_OPPT = 0.002032411
