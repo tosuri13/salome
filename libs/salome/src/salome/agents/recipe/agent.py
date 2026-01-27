@@ -40,6 +40,8 @@ class SalomeRecipeAgent:
             model=BedrockModel(
                 region_name=self._region_name,
                 model_id=self._model_id,
+                temperature=0.0,
+                max_tokens=8192,
             ),
             callback_handler=PrintingCallbackHandler() if debug else None,
             system_prompt=self._system,

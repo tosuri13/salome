@@ -30,6 +30,8 @@ class SalomeAskAgent:
             model=BedrockModel(
                 region_name=self.region_name,
                 model_id=self.model_id,
+                temperature=0.0,
+                max_tokens=8192,
             ),
             callback_handler=PrintingCallbackHandler() if debug else None,
             system_prompt=self.system,

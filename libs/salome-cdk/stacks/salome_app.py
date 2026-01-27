@@ -3,7 +3,6 @@ import os
 import aws_cdk as cdk
 from aws_cdk import Stack
 from aws_cdk import aws_apigateway as apigw
-from aws_cdk import aws_bedrock_alpha as bedrock
 from aws_cdk import aws_iam as iam
 from aws_cdk import aws_lambda as _lambda
 from aws_cdk import aws_s3vectors as s3vectors
@@ -20,12 +19,6 @@ DISCORD_PUBLIC_KEY = os.environ["DISCORD_PUBLIC_KEY"]
 class SalomeAppStack(Stack):
     def __init__(self, scope: Construct, id: str, **kwargs):
         super().__init__(scope, id, **kwargs)
-
-        # 🐧 Bedrock Foundation Models 🐧
-
-        salome_foundation_model = bedrock.BedrockFoundationModel(
-            value=Config.DEFAULT_GENERATIVE_MODEL_ID
-        )
 
         # 🐧 S3 Vectors & Indexes 🐧
 
@@ -67,11 +60,14 @@ class SalomeAppStack(Stack):
                     statements=[
                         iam.PolicyStatement(
                             actions=[
+                                "bedrock:InvokeModel",
+                                "bedrock:InvokeModelWithResponseStream",
                                 "s3Vectors:DeleteVectors",
                                 "s3Vectors:GetVectors",
                                 "s3Vectors:ListVectors",
                                 "s3Vectors:PutVectors",
                                 "s3Vectors:QueryVectors",
+                                "sns:Publish",
                             ],
                             effect=iam.Effect.ALLOW,
                             resources=["*"],
@@ -86,8 +82,6 @@ class SalomeAppStack(Stack):
             ],
             role_name="salome-function-role",
         )
-        salome_foundation_model.grant_invoke(salome_function_role)
-        salome_server_interact_topic.grant_publish(salome_function_role)
 
         # 🐧 Lambda Functions 🐧
 

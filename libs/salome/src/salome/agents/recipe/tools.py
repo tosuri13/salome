@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from salome.config import Config
 from salome.utils.aws.bedrock import BedrockRuntimeClient
 from salome.utils.aws.s3vectors import S3VectorsClient
-from strands.tools import tool
+from strands import tool
 
 if TYPE_CHECKING:
     from strands.tools.decorator import DecoratedFunctionTool
@@ -19,10 +19,10 @@ class Recipe:
 
     def __str__(self):
         text = f"## レシピ名: {self.name}\n\n"
-        text += "### 材料" + "\n".join(f"- {i}" for i in self.ingredients) + "\n\n"
-        text += "### 手順" + "\n".join(f"{s}" for s in self.steps)
+        text += "### 材料\n" + "\n".join(f"- {i}" for i in self.ingredients) + "\n\n"
+        text += "### 手順\n" + "\n".join(f"{s}" for s in self.steps)
 
-        return text
+        return text.strip()
 
 
 class RecipeTools:
@@ -42,6 +42,7 @@ class RecipeTools:
 
     def __call__(self) -> list[DecoratedFunctionTool]:
         return [
+            self.get,
             self.register,
             self.search,
             self.list,
@@ -112,13 +113,13 @@ class RecipeTools:
         return f"✅ 「{name}」をデータベースに保存しました！"
 
     @tool
-    def search(self, query: str, top_k: int = 5) -> str:
+    def search(self, query: str, top_k: int = 3) -> str:
         """
         自然言語のリクエストからレシピを検索する
 
         Args:
             query: 自然言語で記載されたクエリ (例: "じゃがいもを使った辛い料理")
-            top_k: 取得件数 (デフォルト: 5)
+            top_k: 取得件数 (デフォルト: 3)
         """
 
         embedding = self._embed(query)

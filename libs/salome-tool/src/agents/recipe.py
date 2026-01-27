@@ -3,24 +3,24 @@ from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
-from salome.agents import SalomeAskAgent
+from salome.agents import SalomeRecipeAgent
 
 console = Console()
 
 
 if __name__ == "__main__":
-    console.print("👋 Salome Ask Agent", style="bold cyan")
+    console.print("🍳 Salome Recipe Agent", style="bold cyan")
 
-    question = questionary.text("質問を入力してください:").ask()
+    order = questionary.text("指示を入力してください:").ask()
 
-    if not question:
-        console.print("❌ 質問が入力されていません", style="bold red")
+    if not order:
+        console.print("❌ 指示が入力されていません", style="bold red")
         exit(1)
 
     debug = questionary.confirm("デバッグモードを有効にしますか?", default=False).ask()
 
-    agent = SalomeAskAgent()
-    result = agent.run(question, debug)
+    agent = SalomeRecipeAgent()
+    result = agent.run(order, debug)
 
     console.print(
         Panel(
