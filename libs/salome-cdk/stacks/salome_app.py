@@ -15,6 +15,11 @@ DISCORD_APPLICATION_ID = os.environ["DISCORD_APPLICATION_ID"]
 DISCORD_BOT_TOKEN = os.environ["DISCORD_BOT_TOKEN"]
 DISCORD_PUBLIC_KEY = os.environ["DISCORD_PUBLIC_KEY"]
 
+MINECRAFT_INSTANCE_ID = os.environ["MINECRAFT_INSTANCE_ID"]
+MINECRAFT_SERVER_VERSION = os.environ["MINECRAFT_SERVER_VERSION"]
+MINECRAFT_BACKUP_BUCKET_NAME = os.environ["MINECRAFT_BACKUP_BUCKET_NAME"]
+MINECRAFT_INSTANCE_REGION = os.environ.get("MINECRAFT_INSTANCE_REGION", "ap-south-1")
+
 
 class SalomeAppStack(Stack):
     def __init__(self, scope: Construct, id: str, **kwargs):
@@ -62,12 +67,17 @@ class SalomeAppStack(Stack):
                             actions=[
                                 "bedrock:InvokeModel",
                                 "bedrock:InvokeModelWithResponseStream",
+                                "ec2:DescribeInstances",
+                                "ec2:StartInstances",
+                                "ec2:StopInstances",
                                 "s3Vectors:DeleteVectors",
                                 "s3Vectors:GetVectors",
                                 "s3Vectors:ListVectors",
                                 "s3Vectors:PutVectors",
                                 "s3Vectors:QueryVectors",
                                 "sns:Publish",
+                                "ssm:GetCommandInvocation",
+                                "ssm:SendCommand",
                             ],
                             effect=iam.Effect.ALLOW,
                             resources=["*"],
@@ -152,6 +162,37 @@ class SalomeAppStack(Stack):
                 filter_policy={
                     "command": sns.SubscriptionFilter.string_filter(
                         allowlist=["recipe"],
+                    ),
+                },
+            )
+        )
+
+        salome_server_interact_minecraft_function = _lambda.DockerImageFunction(
+            self,
+            "SalomeServerInteractMinecraftFunction",
+            code=_lambda.DockerImageCode.from_image_asset(
+                directory="../..",
+                cmd=["functions.server.interact.minecraft.function.handler"],
+            ),
+            architecture=_lambda.Architecture.ARM_64,
+            function_name="salome-server-interact-minecraft-function",
+            role=salome_function_role,  # type: ignore
+            timeout=cdk.Duration.minutes(5),
+            environment={
+                "DISCORD_APPLICATION_ID": DISCORD_APPLICATION_ID,
+                "DISCORD_BOT_TOKEN": DISCORD_BOT_TOKEN,
+                "MINECRAFT_INSTANCE_ID": MINECRAFT_INSTANCE_ID,
+                "MINECRAFT_SERVER_VERSION": MINECRAFT_SERVER_VERSION,
+                "MINECRAFT_BACKUP_BUCKET_NAME": MINECRAFT_BACKUP_BUCKET_NAME,
+                "MINECRAFT_INSTANCE_REGION": MINECRAFT_INSTANCE_REGION,
+            },
+        )
+        salome_server_interact_topic.add_subscription(
+            sns_subscriptions.LambdaSubscription(
+                salome_server_interact_minecraft_function,  # type: ignore
+                filter_policy={
+                    "command": sns.SubscriptionFilter.string_filter(
+                        allowlist=["minecraft"],
                     ),
                 },
             )

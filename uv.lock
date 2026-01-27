@@ -157,11 +157,17 @@ wheels = [
 bedrock-runtime = [
     { name = "mypy-boto3-bedrock-runtime" },
 ]
+ec2 = [
+    { name = "mypy-boto3-ec2" },
+]
 s3vectors = [
     { name = "mypy-boto3-s3vectors" },
 ]
 sns = [
     { name = "mypy-boto3-sns" },
+]
+ssm = [
+    { name = "mypy-boto3-ssm" },
 ]
 
 [[package]]
@@ -614,6 +620,15 @@ wheels = [
 ]
 
 [[package]]
+name = "mypy-boto3-ec2"
+version = "1.42.35"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/34/03/d379e3bf227caa7ea679d22517f8ed71bab98ddaf658e0c829fc7f05c3ec/mypy_boto3_ec2-1.42.35.tar.gz", hash = "sha256:ba25087ee6dd61347424be1f2cb02b9cbf5f1cc737e49b69070b9dda95b71c4c", size = 433172, upload-time = "2026-01-26T20:44:05.878Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/39/bf/a74a77ae46e91b3c3f0ac846f90675e09fe4a9002a6ffdffbbc49a371cb1/mypy_boto3_ec2-1.42.35-py3-none-any.whl", hash = "sha256:2d17f1de30cc95dbefeabc091aca1eb32ba4fe33dc141fc1383bcdf9e0c03f62", size = 423422, upload-time = "2026-01-26T20:44:02.116Z" },
+]
+
+[[package]]
 name = "mypy-boto3-s3vectors"
 version = "1.42.3"
 source = { registry = "https://pypi.org/simple" }
@@ -629,6 +644,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/04/04/b92f3a739a174ced22d80996c4555640c2861daaba8ee1f9e9f0bb817e0a/mypy_boto3_sns-1.42.3.tar.gz", hash = "sha256:1edfe88bf30eb191dc499378e75e78001ccf0c29e372ac49a8cfcc86005d8a7e", size = 32665, upload-time = "2025-12-04T21:13:17.606Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ae/32/43584256daba1ce613543945a6b3c8bcd102b52f668cd88e90afe460920d/mypy_boto3_sns-1.42.3-py3-none-any.whl", hash = "sha256:97d1ee3b4a3a31b51939a20b1f31c5e87b6842d2086397f64a9b25133aea378a", size = 39911, upload-time = "2025-12-04T21:13:13.468Z" },
+]
+
+[[package]]
+name = "mypy-boto3-ssm"
+version = "1.42.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/52/ba/96fe6b876918fb1d61c1ee82ac8e2b23393f23e2c3d67da9f95f57d3f925/mypy_boto3_ssm-1.42.3.tar.gz", hash = "sha256:d8831e8f4f2946616ea461b75d985c8498f0050ca7a5c3c2e8b4c3df02a99237", size = 94314, upload-time = "2025-12-04T21:13:39.27Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/21/7b/521847f0ca41a6d892361b12999ecea069f7631cfc3804b024ca97b6f2c1/mypy_boto3_ssm-1.42.3-py3-none-any.whl", hash = "sha256:23b9fa94a832ec4ebe498e0d90fc508581bea80b5a6fed9c8aba441db01cc260", size = 95950, upload-time = "2025-12-04T21:13:37.157Z" },
 ]
 
 [[package]]
@@ -1051,7 +1075,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "boto3-stubs", extra = ["bedrock-runtime", "s3vectors", "sns"] },
+    { name = "boto3-stubs", extra = ["bedrock-runtime", "ec2", "s3vectors", "sns", "ssm"] },
 ]
 
 [package.metadata]
@@ -1065,7 +1089,7 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
-dev = [{ name = "boto3-stubs", extras = ["bedrock-runtime", "s3vectors", "sns"], specifier = ">=1.42.30" }]
+dev = [{ name = "boto3-stubs", extras = ["bedrock-runtime", "ec2", "s3vectors", "sns", "ssm"], specifier = ">=1.42.30" }]
 
 [[package]]
 name = "salome-app"

@@ -1,4 +1,5 @@
 from salome.bot.handlers.ask import AskCommandHandler
+from salome.bot.handlers.minecraft import MinecraftCommandHandler
 from salome.bot.handlers.recipe import RecipeCommandHandler
 from salome.utils.discord import DiscordClient
 
@@ -8,4 +9,5 @@ class SalomeBot:
         self.client = client
 
         self.ask = AskCommandHandler(self)
+        self.minecraft = MinecraftCommandHandler(self)
         self.recipe = RecipeCommandHandler(self)
