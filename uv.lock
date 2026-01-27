@@ -157,6 +157,9 @@ wheels = [
 bedrock-runtime = [
     { name = "mypy-boto3-bedrock-runtime" },
 ]
+s3vectors = [
+    { name = "mypy-boto3-s3vectors" },
+]
 sns = [
     { name = "mypy-boto3-sns" },
 ]
@@ -611,6 +614,15 @@ wheels = [
 ]
 
 [[package]]
+name = "mypy-boto3-s3vectors"
+version = "1.42.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/44/5b/5dd79687c3ef0ad3f7fc09cde91437e4d5fe914864e34937a4765e97e0e5/mypy_boto3_s3vectors-1.42.3.tar.gz", hash = "sha256:6a89e611607f0205ae31a8470134bb0926cc126c7104579f9dbb7c5ee236750d", size = 18487, upload-time = "2025-12-04T21:11:57.659Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c0/00/0d2191efa38f64867b5b9ebd025c3fde0eec9b96b947aa5acd05cfe3c856/mypy_boto3_s3vectors-1.42.3-py3-none-any.whl", hash = "sha256:e55f78fec625181c788a306782e28a415a23dee4a063970d6beab0b9d4fa3ba3", size = 24478, upload-time = "2025-12-04T21:11:55.13Z" },
+]
+
+[[package]]
 name = "mypy-boto3-sns"
 version = "1.42.3"
 source = { registry = "https://pypi.org/simple" }
@@ -1039,7 +1051,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "boto3-stubs", extra = ["bedrock-runtime", "sns"] },
+    { name = "boto3-stubs", extra = ["bedrock-runtime", "s3vectors", "sns"] },
 ]
 
 [package.metadata]
@@ -1053,7 +1065,7 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
-dev = [{ name = "boto3-stubs", extras = ["bedrock-runtime", "sns"], specifier = ">=1.42.30" }]
+dev = [{ name = "boto3-stubs", extras = ["bedrock-runtime", "s3vectors", "sns"], specifier = ">=1.42.30" }]
 
 [[package]]
 name = "salome-app"

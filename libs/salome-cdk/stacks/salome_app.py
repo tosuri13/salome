@@ -6,6 +6,7 @@ from aws_cdk import aws_apigateway as apigw
 from aws_cdk import aws_bedrock_alpha as bedrock
 from aws_cdk import aws_iam as iam
 from aws_cdk import aws_lambda as _lambda
+from aws_cdk import aws_s3vectors as s3vectors
 from aws_cdk import aws_sns as sns
 from aws_cdk import aws_sns_subscriptions as sns_subscriptions
 from constructs import Construct
@@ -23,7 +24,28 @@ class SalomeAppStack(Stack):
         # 🐧 Bedrock Foundation Models 🐧
 
         salome_foundation_model = bedrock.BedrockFoundationModel(
-            value=Config.DEFAULT_MODEL_ID
+            value=Config.DEFAULT_GENERATIVE_MODEL_ID
+        )
+
+        # 🐧 S3 Vectors & Indexes 🐧
+
+        salome_recipe_vector_bucket = s3vectors.CfnVectorBucket(
+            self,
+            "SalomeRecipeVectorBucket",
+            vector_bucket_name="salome-recipe-vector-bucket",
+        )
+
+        salome_recipes_vector_index = s3vectors.CfnIndex(
+            self,
+            "SalomeRecipesVectorIndex",
+            data_type="float32",
+            dimension=Config.DEFAULT_EMBEDDING_DIMENSIONS,
+            distance_metric="cosine",
+            index_name="recipes",
+            metadata_configuration=s3vectors.CfnIndex.MetadataConfigurationProperty(
+                non_filterable_metadata_keys=["text"]
+            ),
+            vector_bucket_arn=salome_recipe_vector_bucket.attr_vector_bucket_arn,
         )
 
         # 🐧 SNS Topics 🐧
@@ -40,6 +62,23 @@ class SalomeAppStack(Stack):
             self,
             "SalomeFunctionRole",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),  # type: ignore
+            inline_policies={
+                "salome-function-policy": iam.PolicyDocument(
+                    statements=[
+                        iam.PolicyStatement(
+                            actions=[
+                                "s3Vectors:DeleteVectors",
+                                "s3Vectors:GetVectors",
+                                "s3Vectors:ListVectors",
+                                "s3Vectors:PutVectors",
+                                "s3Vectors:QueryVectors",
+                            ],
+                            effect=iam.Effect.ALLOW,
+                            resources=["*"],
+                        ),
+                    ]
+                )
+            },
             managed_policies=[
                 iam.ManagedPolicy.from_aws_managed_policy_name(
                     "service-role/AWSLambdaBasicExecutionRole",
@@ -91,6 +130,34 @@ class SalomeAppStack(Stack):
                 filter_policy={
                     "command": sns.SubscriptionFilter.string_filter(
                         allowlist=["ask"],
+                    ),
+                },
+            )
+        )
+
+        salome_server_interact_recipe_function = _lambda.DockerImageFunction(
+            self,
+            "SalomeServerInteractRecipeFunction",
+            code=_lambda.DockerImageCode.from_image_asset(
+                directory="../..",
+                cmd=["functions.server.interact.recipe.function.handler"],
+            ),
+            architecture=_lambda.Architecture.ARM_64,
+            function_name="salome-server-interact-recipe-function",
+            role=salome_function_role,  # type: ignore
+            timeout=cdk.Duration.minutes(5),
+            environment={
+                "DISCORD_APPLICATION_ID": DISCORD_APPLICATION_ID,
+                "DISCORD_BOT_TOKEN": DISCORD_BOT_TOKEN,
+                "RECIPE_VECTOR_INDEX_ARN": salome_recipes_vector_index.attr_index_arn,
+            },
+        )
+        salome_server_interact_topic.add_subscription(
+            sns_subscriptions.LambdaSubscription(
+                salome_server_interact_recipe_function,  # type: ignore
+                filter_policy={
+                    "command": sns.SubscriptionFilter.string_filter(
+                        allowlist=["recipe"],
                     ),
                 },
             )

@@ -3,6 +3,7 @@ import os
 from rich.console import Console
 from salome.bot.handlers import CommandHandler
 from salome.bot.handlers.ask import AskCommandHandler
+from salome.bot.handlers.recipe import RecipeCommandHandler
 from salome.utils.discord import DiscordClient
 
 DISCORD_APPLICATION_ID = os.environ["DISCORD_APPLICATION_ID"]
@@ -18,7 +19,10 @@ if __name__ == "__main__":
     for cmd in client.get_commands():
         client.delete_command(cmd["id"])
 
-    handlers: list[type[CommandHandler]] = [AskCommandHandler]
+    handlers: list[type[CommandHandler]] = [
+        AskCommandHandler,
+        RecipeCommandHandler,
+    ]
     commands = [handler.option for handler in handlers]
 
     for cmd in commands:

@@ -17,11 +17,11 @@ class SalomeAskAgentResult:
 class SalomeAskAgent:
     def __init__(
         self,
-        model_id: str = Config.DEFAULT_MODEL_ID,
         region_name: str = Config.DEFAULT_REGION_NAME,
+        model_id: str = Config.DEFAULT_GENERATIVE_MODEL_ID,
     ):
-        self.model_id = model_id
         self.region_name = region_name
+        self.model_id = model_id
 
         self.system = SALOME_ROLE_PROMPT
 
