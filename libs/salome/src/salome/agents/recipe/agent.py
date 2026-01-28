@@ -21,13 +21,13 @@ class SalomeRecipeAgentResult:
 
 class SalomeRecipeAgent:
     def __init__(self):
-        self._system = SALOME_ROLE_PROMPT
-        self._user_template = Template((PROMPTS_PATH / "user.md").read_text())
+        self.system = SALOME_ROLE_PROMPT
+        self.user_template = Template((PROMPTS_PATH / "user.md").read_text())
 
         self.recipe_tools = RecipeTools()
 
     def run(self, order: str, debug: bool = False) -> SalomeRecipeAgentResult:
-        user = self._user_template.substitute(order=order)
+        user = self.user_template.substitute(order=order)
 
         agent = Agent(
             model=BedrockModel(
@@ -37,7 +37,7 @@ class SalomeRecipeAgent:
                 max_tokens=8192,
             ),
             callback_handler=PrintingCallbackHandler() if debug else None,
-            system_prompt=self._system,
+            system_prompt=self.system,
             tools=self.recipe_tools(),
         )
         result = agent(user)
