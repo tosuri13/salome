@@ -20,26 +20,19 @@ class SalomeRecipeAgentResult:
 
 
 class SalomeRecipeAgent:
-    def __init__(
-        self,
-        region_name: str = Config.DEFAULT_REGION_NAME,
-        model_id: str = Config.DEFAULT_GENERATIVE_MODEL_ID,
-    ):
-        self._region_name = region_name
-        self._model_id = model_id
-
+    def __init__(self):
         self._system = SALOME_ROLE_PROMPT
         self._user_template = Template((PROMPTS_PATH / "user.md").read_text())
 
         self.recipe_tools = RecipeTools()
 
     def run(self, order: str, debug: bool = False) -> SalomeRecipeAgentResult:
-        user = self._user_template.substitute({"order": order})
+        user = self._user_template.substitute(order=order)
 
         agent = Agent(
             model=BedrockModel(
-                region_name=self._region_name,
-                model_id=self._model_id,
+                region_name=Config.DEFAULT_REGION_NAME,
+                model_id=Config.DEFAULT_GENERATIVE_MODEL_ID,
                 temperature=0.0,
                 max_tokens=8192,
             ),
@@ -49,7 +42,7 @@ class SalomeRecipeAgent:
         )
         result = agent(user)
 
-        return SalomeRecipeAgentResult(
-            answer=str(result).strip(),
-            usage=result.metrics.accumulated_usage,
-        )
+        answer = str(result).strip()
+        usage = result.metrics.accumulated_usage
+
+        return SalomeRecipeAgentResult(answer, usage)

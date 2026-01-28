@@ -15,21 +15,14 @@ class SalomeAskAgentResult:
 
 
 class SalomeAskAgent:
-    def __init__(
-        self,
-        region_name: str = Config.DEFAULT_REGION_NAME,
-        model_id: str = Config.DEFAULT_GENERATIVE_MODEL_ID,
-    ):
-        self.region_name = region_name
-        self.model_id = model_id
-
+    def __init__(self):
         self.system = SALOME_ROLE_PROMPT
 
     def run(self, question: str, debug: bool = False) -> SalomeAskAgentResult:
         agent = Agent(
             model=BedrockModel(
-                region_name=self.region_name,
-                model_id=self.model_id,
+                region_name=Config.DEFAULT_REGION_NAME,
+                model_id=Config.DEFAULT_GENERATIVE_MODEL_ID,
                 temperature=0.0,
                 max_tokens=8192,
             ),
@@ -38,7 +31,7 @@ class SalomeAskAgent:
         )
         result = agent(question)
 
-        return SalomeAskAgentResult(
-            str(result).strip(),
-            result.metrics.accumulated_usage,
-        )
+        answer = str(result).strip()
+        usage = result.metrics.accumulated_usage
+
+        return SalomeAskAgentResult(answer, usage)

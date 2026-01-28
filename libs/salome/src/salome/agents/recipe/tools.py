@@ -26,19 +26,11 @@ class Recipe:
 
 
 class RecipeTools:
-    def __init__(
-        self,
-        bedrock_client: BedrockRuntimeClient | None = None,
-        s3vectors_client: S3VectorsClient | None = None,
-        index_arn: str = os.environ["RECIPE_VECTOR_INDEX_ARN"],
-        embedding_model_id: str = Config.DEFAULT_EMBEDDING_MODEL_ID,
-        embedding_dimensions: int = Config.DEFAULT_EMBEDDING_DIMENSIONS,
-    ):
-        self._bedrock_client = bedrock_client or BedrockRuntimeClient()
-        self._s3vectors_client = s3vectors_client or S3VectorsClient()
-        self._index_arn = index_arn
-        self._embedding_model_id = embedding_model_id
-        self._embedding_dimensions = embedding_dimensions
+    def __init__(self):
+        self._bedrock = BedrockRuntimeClient()
+        self._s3vectors = S3VectorsClient()
+
+        self._index_arn = os.environ["RECIPE_VECTOR_INDEX_ARN"]
 
     def __call__(self) -> list[DecoratedFunctionTool]:
         return [
@@ -50,11 +42,10 @@ class RecipeTools:
         ]
 
     def _embed(self, text: str) -> list[float]:
-        return self._bedrock_client.embed(
-            self._embedding_model_id,
-            text,
-            self._embedding_dimensions,
-        )
+        model_id = Config.DEFAULT_EMBEDDING_MODEL_ID
+        dimensions = Config.DEFAULT_EMBEDDING_DIMENSIONS
+
+        return self._bedrock.embed(model_id, text, dimensions)
 
     @tool
     def get(self, name: str) -> str:
@@ -65,7 +56,7 @@ class RecipeTools:
             name: 取得対象のレシピ名
         """
 
-        response = self._s3vectors_client.get_vectors(
+        response = self._s3vectors.get_vectors(
             index_arn=self._index_arn,
             keys=[name],
             return_metadata=True,
@@ -99,7 +90,7 @@ class RecipeTools:
         text = str(Recipe(name, ingredients, steps))
         embedding = self._embed(text)
 
-        self._s3vectors_client.put_vector(
+        self._s3vectors.put_vector(
             index_arn=self._index_arn,
             vectors=[
                 {
@@ -123,7 +114,7 @@ class RecipeTools:
         """
 
         embedding = self._embed(query)
-        vectors = self._s3vectors_client.query_vectors(
+        vectors = self._s3vectors.query_vectors(
             index_arn=self._index_arn,
             embedding=embedding,
             top_k=top_k,
@@ -151,7 +142,7 @@ class RecipeTools:
         レシピの一覧にはレシピ名のみが含まれます(レシピの材料や手順は含まれていません)
         """
 
-        vectors = self._s3vectors_client.list_vectors(
+        vectors = self._s3vectors.list_vectors(
             index_arn=self._index_arn,
             return_metadata=True,
         )
@@ -172,7 +163,7 @@ class RecipeTools:
             name: 削除対象のレシピ名
         """
 
-        self._s3vectors_client.delete_vectors(
+        self._s3vectors.delete_vectors(
             index_arn=self._index_arn,
             keys=[name],
         )
