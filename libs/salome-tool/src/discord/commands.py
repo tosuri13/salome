@@ -1,9 +1,7 @@
 import os
 
 from rich.console import Console
-from salome.bot.handlers import CommandHandler
-from salome.bot.handlers.ask import AskCommandHandler
-from salome.bot.handlers.recipe import RecipeCommandHandler
+from salome.bot.handlers import AskCommandHandler, CommandHandler, RecipeCommandHandler
 from salome.utils.discord import DiscordClient
 
 DISCORD_APPLICATION_ID = os.environ["DISCORD_APPLICATION_ID"]

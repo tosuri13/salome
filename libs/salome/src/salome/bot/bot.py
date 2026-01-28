@@ -1,5 +1,4 @@
-from salome.bot.handlers.ask import AskCommandHandler
-from salome.bot.handlers.recipe import RecipeCommandHandler
+from salome.bot.handlers import AskCommandHandler, RecipeCommandHandler
 from salome.utils.discord import DiscordClient
 
 
