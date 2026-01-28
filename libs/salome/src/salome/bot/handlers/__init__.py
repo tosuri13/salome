@@ -1,9 +1,9 @@
 from .ask import AskCommandHandler
-from .common import CommandHandler
+from .minecraft import MinecraftHandler
 from .recipe import RecipeCommandHandler
 
 __all__ = [
     "AskCommandHandler",
-    "CommandHandler",
+    "MinecraftHandler",
     "RecipeCommandHandler",
 ]

@@ -1,3 +1,3 @@
-from .ask import AskCommandHandler
+from .handler import AskCommandHandler
 
 __all__ = ["AskCommandHandler"]

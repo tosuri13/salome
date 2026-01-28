@@ -1,19 +1,19 @@
 from typing import Any
 
-from salome.agents import SalomeAskAgent
-from salome.bot.handlers import CommandHandler
+from salome.agents import SalomeRecipeAgent
+from salome.bot.handlers.common import CommandHandler
 from salome.utils import calc_inference_cost
 from salome.utils.discord import CommandOptionType
 
 
-class AskCommandHandler(CommandHandler):
+class RecipeCommandHandler(CommandHandler):
     option = {
-        "name": "ask",
-        "description": "何でも聞きたいことを質問してみよう!!",
+        "name": "recipe",
+        "description": "お料理のレシピを教えてもらおう!!",
         "options": [
             {
-                "name": "question",
-                "description": "質問",
+                "name": "order",
+                "description": "レシピの登録や検索などの指示",
                 "required": True,
                 "type": CommandOptionType.STRING,
             }
@@ -24,8 +24,8 @@ class AskCommandHandler(CommandHandler):
         options = self.parse_options(message)
         interaction_token = message["token"]
 
-        agent = SalomeAskAgent()
-        result = agent.run(options["question"])
+        agent = SalomeRecipeAgent()
+        result = agent.run(options["order"])
 
         self.bot.client.send_followup_message(
             interaction_token=interaction_token,
