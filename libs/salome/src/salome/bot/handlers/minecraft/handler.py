@@ -4,7 +4,7 @@ from typing import Any
 from salome.bot.handlers.common import CommandHandler
 from salome.utils.discord import CommandOptionType
 
-from .actions import (
+from .handlers import (
     MinecraftBackupActionHandler,
     MinecraftStartActionHandler,
     MinecraftStatusActionHandler,
@@ -30,7 +30,11 @@ class MinecraftHandler(CommandHandler):
                 "required": True,
                 "type": CommandOptionType.STRING,
                 "choices": [
-                    {"name": action, "value": action} for action in MinecraftAction
+                    {
+                        "name": action,
+                        "value": action,
+                    }
+                    for action in MinecraftAction
                 ],
             }
         ],
