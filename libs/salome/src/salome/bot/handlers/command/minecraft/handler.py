@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any
 
-from salome.bot.handlers.common import CommandHandler
+from salome.bot.handlers.command.common import CommandHandler
 from salome.utils.discord import CommandOptionType
 
 from .handlers import (

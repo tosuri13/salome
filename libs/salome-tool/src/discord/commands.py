@@ -6,7 +6,7 @@ from salome.bot.handlers import (
     MinecraftCommandHandler,
     RecipeCommandHandler,
 )
-from salome.bot.handlers.common import CommandHandler
+from salome.bot.handlers.command.common import CommandHandler
 from salome.utils.discord import DiscordClient
 
 DISCORD_APPLICATION_ID = os.environ["DISCORD_APPLICATION_ID"]

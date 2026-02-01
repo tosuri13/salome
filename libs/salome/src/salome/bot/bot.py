@@ -1,5 +1,6 @@
 from salome.bot.handlers import (
     AskCommandHandler,
+    GarbageScheduleHandler,
     MinecraftCommandHandler,
     RecipeCommandHandler,
 )
@@ -13,3 +14,5 @@ class SalomeBot:
         self.ask = AskCommandHandler(self)
         self.minecraft = MinecraftCommandHandler(self)
         self.recipe = RecipeCommandHandler(self)
+
+        self.garbage = GarbageScheduleHandler(self)

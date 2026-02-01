@@ -31,6 +31,22 @@ class DiscordClient:
         if response.status_code != 200:
             raise ValueError(f"Discord API failed: {response.text}")
 
+    def send_channel_message(
+        self,
+        channel_id: str,
+        embeds: list[dict[str, Any]],
+    ):
+        response = requests.post(
+            f"{DISCORD_API_BASEURL}/channels/{channel_id}/messages",
+            headers=self._headers,
+            json={
+                "embeds": embeds,
+            },
+        )
+
+        if response.status_code != 200:
+            raise ValueError(f"Discord API failed: {response.text}")
+
     def get_commands(self) -> list[dict[str, Any]]:
         response = requests.get(
             f"{DISCORD_API_BASEURL}/applications/{self.application_id}/commands",

@@ -3,6 +3,8 @@ import os
 import aws_cdk as cdk
 from aws_cdk import Stack
 from aws_cdk import aws_apigateway as apigw
+from aws_cdk import aws_events as events
+from aws_cdk import aws_events_targets as events_targets
 from aws_cdk import aws_iam as iam
 from aws_cdk import aws_lambda as _lambda
 from aws_cdk import aws_s3 as s3
@@ -15,6 +17,7 @@ from salome.config import Config
 DISCORD_APPLICATION_ID = os.environ["DISCORD_APPLICATION_ID"]
 DISCORD_BOT_TOKEN = os.environ["DISCORD_BOT_TOKEN"]
 DISCORD_PUBLIC_KEY = os.environ["DISCORD_PUBLIC_KEY"]
+DISCORD_CHANNEL_ID = os.environ["DISCORD_CHANNEL_ID"]
 
 MINECRAFT_SERVER_INSTANCE_ID = os.environ["MINECRAFT_SERVER_INSTANCE_ID"]
 MINECRAFT_SERVER_INSTANCE_REGION = os.environ["MINECRAFT_SERVER_INSTANCE_REGION"]
@@ -206,6 +209,24 @@ class SalomeAppStack(Stack):
             )
         )
 
+        salome_server_notify_garbage_function = _lambda.DockerImageFunction(
+            self,
+            "SalomeServerNotifyGarbageFunction",
+            code=_lambda.DockerImageCode.from_image_asset(
+                directory="../..",
+                cmd=["functions.server.notify.garbage.function.handler"],
+            ),
+            architecture=_lambda.Architecture.ARM_64,
+            function_name="salome-server-notify-garbage-function",
+            role=salome_function_role,  # type: ignore
+            timeout=cdk.Duration.minutes(5),
+            environment={
+                "DISCORD_APPLICATION_ID": DISCORD_APPLICATION_ID,
+                "DISCORD_BOT_TOKEN": DISCORD_BOT_TOKEN,
+                "DISCORD_CHANNEL_ID": DISCORD_CHANNEL_ID,
+            },
+        )
+
         # 🐧 API Gateway & Integration 🐧
 
         salome_api = apigw.LambdaRestApi(
@@ -214,4 +235,16 @@ class SalomeAppStack(Stack):
             handler=salome_api_function,  # type: ignore
             deploy_options=apigw.StageOptions(stage_name="v1"),
             rest_api_name="salome-api",
+        )
+
+        # 🐧 EventBridge Rules 🐧
+
+        events.Rule(
+            self,
+            "SalomeNotifyGarbageRule",
+            rule_name="salome-notify-garbage-rule",
+            schedule=events.Schedule.cron(hour="22", minute="50"),
+            targets=[
+                events_targets.LambdaFunction(salome_server_notify_garbage_function),  # type: ignore
+            ],
         )
