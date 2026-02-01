@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from salome.bot.handlers.minecraft.handlers.common import MinecraftActionHandler
+from salome.bot.handlers.command.minecraft.handlers.common import MinecraftActionHandler
 from salome.config import Config
 from salome.utils.aws import SSMClient
 
