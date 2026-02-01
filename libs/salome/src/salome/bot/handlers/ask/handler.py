@@ -2,6 +2,7 @@ from typing import Any
 
 from salome.agents import SalomeAskAgent
 from salome.bot.handlers.common import CommandHandler
+from salome.config import Config
 from salome.utils import calc_inference_cost
 from salome.utils.discord import CommandOptionType
 
@@ -29,9 +30,14 @@ class AskCommandHandler(CommandHandler):
 
         self.bot.client.send_followup_message(
             interaction_token=interaction_token,
-            content=(
-                result.answer
-                + "\n\n"
-                + f"> この回答で{calc_inference_cost(result.usage)}ドルいただきましたわ〜！"
-            ),
+            embeds=[
+                {
+                    "description": (
+                        result.answer
+                        + "\n\n"
+                        + f"> この回答で{calc_inference_cost(result.usage)}ドルいただきましたわ〜！"
+                    ),
+                    "color": Config.DEFAULT_DISCORD_EMBED_COLOR,
+                }
+            ],
         )

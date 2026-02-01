@@ -15,12 +15,16 @@ class DiscordClient:
             "Content-Type": "application/json",
         }
 
-    def send_followup_message(self, interaction_token: str, content: str):
+    def send_followup_message(
+        self,
+        interaction_token: str,
+        embeds: list[dict[str, Any]],
+    ):
         response = requests.post(
             f"{DISCORD_API_BASEURL}/webhooks/{self.application_id}/{interaction_token}",
             headers=self._headers,
             json={
-                "content": content,
+                "embeds": embeds,
             },
         )
 

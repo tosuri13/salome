@@ -27,10 +27,10 @@ class Recipe:
 
 class RecipeTools:
     def __init__(self):
+        self.index_arn = os.environ["RECIPE_VECTOR_INDEX_ARN"]
+
         self.bedrock = BedrockRuntimeClient()
         self.s3vectors = S3VectorsClient()
-
-        self.index_arn = os.environ["RECIPE_VECTOR_INDEX_ARN"]
 
     def __call__(self) -> list[DecoratedFunctionTool]:
         return [

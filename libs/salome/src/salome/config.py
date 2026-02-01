@@ -7,3 +7,5 @@ class Config:
 
     DEFAULT_EMBEDDING_MODEL_ID = "amazon.titan-embed-text-v2:0"
     DEFAULT_EMBEDDING_DIMENSIONS = 1024
+
+    DEFAULT_DISCORD_EMBED_COLOR = 0x743D90

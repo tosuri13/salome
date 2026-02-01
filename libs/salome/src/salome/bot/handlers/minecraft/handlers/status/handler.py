@@ -1,38 +1,42 @@
-import os
+from typing import TYPE_CHECKING
 
-from salome.utils.aws import EC2Client
+from salome.bot.handlers.minecraft.handlers.common import MinecraftActionHandler
+from salome.config import Config
 
-from ..common import MinecraftActionHandler
+if TYPE_CHECKING:
+    from salome.bot import SalomeBot
 
 
 class MinecraftStatusActionHandler(MinecraftActionHandler):
+    def __init__(self, bot: "SalomeBot"):
+        super().__init__(bot)
+
     def __call__(self, message):
-        instance_id = os.environ["MINECRAFT_INSTANCE_ID"]
-        instance_region = os.environ.get("MINECRAFT_INSTANCE_REGION", "ap-south-1")
+        instance = self.ec2.describe_instance(self.instance_id)
 
-        ec2 = EC2Client(region_name=instance_region)
-
-        instance = ec2.describe_instance(instance_id)
-        state_name = instance["State"]["Name"]
-
-        match state_name:
+        match instance["State"]["Name"]:  # type: ignore
             case "running":
-                content = (
+                description = (
                     "Minecraftサーバは「実行中」ですわ!!\n"
                     "誰も遊んでおられないのなら、わたくしにサーバの停止を命じてくださいまし!!"
                 )
             case "stopped":
-                content = (
+                description = (
                     "Minecraftサーバは「停止済み」ですわ!!\n"
                     "ふふっ、遊びたいのかしら?でしたら、わたくしにサーバの起動を命じてくださいまし!!"
                 )
             case _:
-                content = (
+                description = (
                     "あら?Minecraftサーバは「実行中」でも「停止済み」でもないみたいですわ...\n"
                     "少し時間をおいて、もう一度わたくしにサーバの確認を命じてもらえるかしら?"
                 )
 
         self.bot.client.send_followup_message(
             interaction_token=message["token"],
-            content=content,
+            embeds=[
+                {
+                    "description": description,
+                    "color": Config.DEFAULT_DISCORD_EMBED_COLOR,
+                }
+            ],
         )
