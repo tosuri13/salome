@@ -15,7 +15,7 @@ class MinecraftBackupActionHandler(MinecraftActionHandler):
         super().__init__(bot)
 
         self.world_name = os.environ["MINECRAFT_SERVER_WORLD_NAME"]
-        self.backup_bucket_name = os.environ["MINECRAFT_SERVER_BACKUP_BUCKET_NAME"]
+        self.backup_bucket_name = os.environ["MINECRAFT_BACKUP_BUCKET_NAME"]
 
         self.ssm = SSMClient(region_name=self.instance_region)
 
@@ -23,12 +23,11 @@ class MinecraftBackupActionHandler(MinecraftActionHandler):
         if not self.is_server_running(message):
             return
 
-        upload_time = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+        upload_time = datetime.now().strftime("%Y%m%d-%H%M%S")
         command_id = self.ssm.send_command(
             instance_id=self.instance_id,
             commands=[
-                "export HOME=/root",
-                "source ~/.bashrc",
+                "export HOME=/root && source ~/.bashrc",
                 f"cd /opt/minecraft/servers/{self.world_name}",
                 f"aws s3 cp world s3://{self.backup_bucket_name}/{self.world_name}/{upload_time}/world --recursive",
             ],
@@ -42,8 +41,8 @@ class MinecraftBackupActionHandler(MinecraftActionHandler):
                 embeds=[
                     {
                         "description": (
-                            "あら?コマンドの実行に失敗したみたいですわ...\n"
-                            "コマンドの履歴を確認してくださる?"
+                            "あら？コマンドの実行に失敗したみたいですわ...\n"
+                            "コマンドの履歴を確認してくださるかしら？"
                         ),
                         "color": Config.DEFAULT_DISCORD_EMBED_COLOR,
                     }
@@ -56,8 +55,8 @@ class MinecraftBackupActionHandler(MinecraftActionHandler):
             embeds=[
                 {
                     "description": (
-                        "ワールドのバックアップを取得しましたわ!!\n"
-                        "ワールドの復旧は、わたくしではなくセバスチャン(開発者)に命令してくださいまし!!"
+                        "ワールドのバックアップを取得しましたわ〜\n"
+                        "ワールドの復旧は、わたくしではなく開発者に直接命令してほしいですわ！"
                     ),
                     "color": Config.DEFAULT_DISCORD_EMBED_COLOR,
                 }

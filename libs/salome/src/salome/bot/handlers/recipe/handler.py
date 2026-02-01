@@ -10,7 +10,7 @@ from salome.utils.discord import CommandOptionType
 class RecipeCommandHandler(CommandHandler):
     option = {
         "name": "recipe",
-        "description": "お料理のレシピを教えてもらおう!!",
+        "description": "お料理のレシピを教えてもらおう！",
         "options": [
             {
                 "name": "order",
@@ -30,12 +30,14 @@ class RecipeCommandHandler(CommandHandler):
 
         self.bot.client.send_followup_message(
             interaction_token=interaction_token,
-            embeds=[{
-                "description": (
-                    result.answer
-                    + "\n\n"
-                    + f"> この回答で{calc_inference_cost(result.usage)}ドルいただきましたわ〜！"
-                ),
-                "color": Config.DEFAULT_DISCORD_EMBED_COLOR,
-            }],
+            embeds=[
+                {
+                    "description": (
+                        result.answer
+                        + "\n\n"
+                        + f"> この回答で{calc_inference_cost(result.usage)}ドルいただきましたわ〜！"
+                    ),
+                    "color": Config.DEFAULT_DISCORD_EMBED_COLOR,
+                }
+            ],
         )

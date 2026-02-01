@@ -29,8 +29,7 @@ class MinecraftStartActionHandler(MinecraftActionHandler):
         command_id = self.ssm.send_command(
             instance_id=self.instance_id,
             commands=[
-                "export HOME=/root",
-                "source ~/.bashrc",
+                "export HOME=/root && source ~/.bashrc",
                 f"cd /opt/minecraft/servers/{self.world_name}",
                 "nohup bash run.sh > nohup.log 2>&1 &",
             ],
@@ -44,8 +43,8 @@ class MinecraftStartActionHandler(MinecraftActionHandler):
                 embeds=[
                     {
                         "description": (
-                            "あら?コマンドの実行に失敗したみたいですわ...\n"
-                            "コマンドの履歴を確認してくださる?"
+                            "あら？コマンドの実行に失敗したみたいですわ...\n"
+                            "コマンドの履歴を確認してくださるかしら？"
                         ),
                         "color": Config.DEFAULT_DISCORD_EMBED_COLOR,
                     }
@@ -58,8 +57,8 @@ class MinecraftStartActionHandler(MinecraftActionHandler):
             embeds=[
                 {
                     "description": (
-                        f"Minecraftサーバ({self.world_name})を起動しましたわ！\n"
-                        f"今回のIPアドレスは「{public_ip}」ですわね\n"
+                        f"Minecraftサーバ(**{self.world_name}**)を起動しましたわ〜\n"
+                        f"今回のIPアドレスは「{public_ip}」ですわ！\n"
                         f"最後にサーバを停止するのをお忘れないようにしてくださいまし！"
                     ),
                     "color": Config.DEFAULT_DISCORD_EMBED_COLOR,

@@ -13,22 +13,23 @@ class MinecraftStatusActionHandler(MinecraftActionHandler):
 
     def __call__(self, message):
         instance = self.ec2.describe_instance(self.instance_id)
+        state_name = instance["State"]["Name"]  # type: ignore
 
-        match instance["State"]["Name"]:  # type: ignore
+        match state_name:
             case "running":
                 description = (
-                    "Minecraftサーバは「実行中」ですわ!!\n"
-                    "誰も遊んでおられないのなら、わたくしにサーバの停止を命じてくださいまし!!"
+                    "Minecraftサーバは「**実行中**」ですわ〜\n"
+                    "誰も遊んでおられないのなら、わたくしにサーバの停止を命じてくださいまし！"
                 )
             case "stopped":
                 description = (
-                    "Minecraftサーバは「停止済み」ですわ!!\n"
-                    "ふふっ、遊びたいのかしら?でしたら、わたくしにサーバの起動を命じてくださいまし!!"
+                    "Minecraftサーバは「**停止済み**」ですわ〜\n"
+                    "ふふっ、遊びたいのかしら？でしたら、わたくしにサーバの起動を命じてくださいまし！"
                 )
             case _:
                 description = (
-                    "あら?Minecraftサーバは「実行中」でも「停止済み」でもないみたいですわ...\n"
-                    "少し時間をおいて、もう一度わたくしにサーバの確認を命じてもらえるかしら?"
+                    "あら？Minecraftサーバは「実行中」でも「停止済み」でもないみたいですわ...\n"
+                    "少し時間をおいて、もう一度わたくしにサーバの確認を命じてもらえるかしら？"
                 )
 
         self.bot.client.send_followup_message(

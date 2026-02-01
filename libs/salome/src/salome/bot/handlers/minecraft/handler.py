@@ -18,11 +18,20 @@ class MinecraftAction(str, Enum):
     STATUS = "status"
     BACKUP = "backup"
 
+    @property
+    def label(self) -> str:
+        return {
+            MinecraftAction.START: "サーバを起動する",
+            MinecraftAction.STOP: "サーバを停止する",
+            MinecraftAction.STATUS: "サーバの状態を確認する",
+            MinecraftAction.BACKUP: "バックアップを取得する",
+        }[self]
 
-class MinecraftHandler(CommandHandler):
+
+class MinecraftCommandHandler(CommandHandler):
     option = {
         "name": "minecraft",
-        "description": "Minecraftサーバーを操作しよう!!",
+        "description": "Minecraftサーバーを操作しよう！",
         "options": [
             {
                 "name": "action",
@@ -31,8 +40,8 @@ class MinecraftHandler(CommandHandler):
                 "type": CommandOptionType.STRING,
                 "choices": [
                     {
-                        "name": action,
-                        "value": action,
+                        "name": action.label,
+                        "value": action.value,
                     }
                     for action in MinecraftAction
                 ],

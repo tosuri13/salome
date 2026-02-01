@@ -10,7 +10,7 @@ from salome.utils.discord import CommandOptionType
 class AskCommandHandler(CommandHandler):
     option = {
         "name": "ask",
-        "description": "何でも聞きたいことを質問してみよう!!",
+        "description": "何でも聞きたいことを質問してみよう！",
         "options": [
             {
                 "name": "question",

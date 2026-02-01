@@ -1,3 +1,3 @@
-from .handler import MinecraftHandler
+from .handler import MinecraftCommandHandler
 
-__all__ = ["MinecraftHandler"]
+__all__ = ["MinecraftCommandHandler"]

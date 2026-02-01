@@ -1,7 +1,12 @@
 import os
 
 from rich.console import Console
-from salome.bot.handlers import AskCommandHandler, CommandHandler, RecipeCommandHandler
+from salome.bot.handlers import (
+    AskCommandHandler,
+    MinecraftCommandHandler,
+    RecipeCommandHandler,
+)
+from salome.bot.handlers.common import CommandHandler
 from salome.utils.discord import DiscordClient
 
 DISCORD_APPLICATION_ID = os.environ["DISCORD_APPLICATION_ID"]
@@ -19,6 +24,7 @@ if __name__ == "__main__":
 
     handlers: list[type[CommandHandler]] = [
         AskCommandHandler,
+        MinecraftCommandHandler,
         RecipeCommandHandler,
     ]
     commands = [handler.option for handler in handlers]

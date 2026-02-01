@@ -20,15 +20,16 @@ class MinecraftActionHandler(ABC):
 
     def is_server_stopped(self, message: dict[str, Any]) -> bool:
         instance = self.ec2.describe_instance(self.instance_id)
+        state_name = instance["State"]["Name"]  # type: ignore
 
-        if instance["State"]["Name"] != "stopped":  # type: ignore
+        if state_name != "stopped":
             self.bot.client.send_followup_message(
                 interaction_token=message["token"],
                 embeds=[
                     {
                         "description": (
-                            "あら?インスタンスが「停止済み」ではないみたいですわ...\n"
-                            "インスタンスの状態を確認してくださる?"
+                            "あら？インスタンスが「**停止済み**」ではないみたいですわ...\n"
+                            "先にインスタンスの状態を確認してくださるかしら？"
                         ),
                         "color": Config.DEFAULT_DISCORD_EMBED_COLOR,
                     }
@@ -40,15 +41,16 @@ class MinecraftActionHandler(ABC):
 
     def is_server_running(self, message: dict[str, Any]) -> bool:
         instance = self.ec2.describe_instance(self.instance_id)
+        state_name = instance["State"]["Name"]  # type: ignore
 
-        if instance["State"]["Name"] != "running":  # type: ignore
+        if state_name != "running":
             self.bot.client.send_followup_message(
                 interaction_token=message["token"],
                 embeds=[
                     {
                         "description": (
-                            "あら?インスタンスが「実行中」ではないみたいですわ...\n"
-                            "インスタンスの状態を確認してくださる?"
+                            "あら？インスタンスが「**実行中**」ではないみたいですわ...\n"
+                            "先にインスタンスの状態を確認してくださるかしら？"
                         ),
                         "color": Config.DEFAULT_DISCORD_EMBED_COLOR,
                     }
