@@ -1,8 +1,12 @@
+from typing import TYPE_CHECKING
+
 from salome.config import Config
-from strands.types.event_loop import Usage
+
+if TYPE_CHECKING:
+    from strands.types.event_loop import Usage
 
 
-def calc_inference_cost(usage: Usage) -> float:
+def calc_inference_cost(usage: "Usage") -> float:
     i_tokens = usage["inputTokens"]
     o_tokens = usage["outputTokens"]
 
