@@ -24,4 +24,3 @@ FROM public.ecr.aws/lambda/python:3.14
 
 COPY --from=builder ${LAMBDA_TASK_ROOT} ${LAMBDA_TASK_ROOT}
 COPY apps ${LAMBDA_TASK_ROOT}
- 

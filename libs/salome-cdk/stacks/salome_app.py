@@ -115,6 +115,7 @@ class SalomeAppStack(Stack):
             ),
             architecture=_lambda.Architecture.ARM_64,
             function_name="salome-api-function",
+            memory_size=512,
             role=salome_function_role,  # type: ignore
             timeout=cdk.Duration.minutes(5),
             environment={
