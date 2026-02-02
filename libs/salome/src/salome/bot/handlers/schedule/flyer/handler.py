@@ -1,9 +1,12 @@
 import os
+import re
 from typing import TYPE_CHECKING
 
 import requests
+from salome.agents import SalomeFlyerAgent
 from salome.bot.handlers.schedule.common import ScheduleHandler
 from salome.config import Config
+from salome.utils import calc_inference_cost
 
 if TYPE_CHECKING:
     from salome.bot import SalomeBot
@@ -30,33 +33,40 @@ class FlyerScheduleHandler(ScheduleHandler):
             headers={
                 "Referer": self.flyer_shuhoo_referer,
             },
-        ).json()
+        )
+        response = response.json()
 
         shop = response["shop"]
         flyers = shop["chirashis"]["chirashi"]
 
-        embeds = []
+        agent = SalomeFlyerAgent()
+
         for flyer in flyers:
+            if not re.search(r"\d{1,2}/\d{1,2}[～〜]\d{1,2}/\d{1,2}", flyer["title"]):
+                continue
+
             date = flyer["insertTime"].split()[0]
             pdf_url = f"https://ipqcache2.shufoo.net/c/{date}/c/{flyer['id']}/index/img/chirashi.pdf"
 
-            embeds.append(
-                {
-                    "title": f"🛒 {flyer['title']}",
-                    "url": pdf_url,
-                    "description": (
-                        f"**{shop['shopName']}**のチラシが届きましたわ！\n"
-                        f"お買い得情報をぜひご覧くださいまし！\n\n"
-                        f"📅 **掲載期間**\n"
-                        f"{flyer['publishStartTime']} ～ {flyer['publishEndTime']}"
-                    ),
-                    "thumbnail": {"url": flyer["iconUrl"]},
-                    "color": Config.DEFAULT_DISCORD_EMBED_COLOR,
-                }
-            )
+            result = agent.run(requests.get(pdf_url).content)
+            cost = calc_inference_cost(result.usage, agent.ippt, agent.ottp)
 
-        if embeds:
             self.bot.client.send_channel_message(
                 channel_id=self.channel_id,
-                embeds=embeds,
+                embeds=[
+                    {
+                        "title": "今週のチラシが届きましたわ〜！",
+                        "url": pdf_url,
+                        "description": (
+                            f"{result.summary}\n"
+                            "\n"
+                            f"📅 **掲載期間**\n"
+                            f"{flyer['publishStartTime']} ～ {flyer['publishEndTime']}\n"
+                            "\n"
+                            f"> この通知で{cost}ドルいただきましたわ〜！"
+                        ),
+                        "thumbnail": {"url": flyer["iconUrl"]},
+                        "color": Config.DEFAULT_DISCORD_EMBED_COLOR,
+                    }
+                ],
             )
