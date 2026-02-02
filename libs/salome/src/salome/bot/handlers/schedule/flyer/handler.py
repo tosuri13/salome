@@ -65,7 +65,6 @@ class FlyerScheduleHandler(ScheduleHandler):
                             "\n"
                             f"> この通知で{cost}ドルいただきましたわ〜！"
                         ),
-                        "thumbnail": {"url": flyer["iconUrl"]},
                         "color": Config.DEFAULT_DISCORD_EMBED_COLOR,
                     }
                 ],
