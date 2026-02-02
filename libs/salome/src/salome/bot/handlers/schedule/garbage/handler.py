@@ -14,14 +14,9 @@ class GarbageScheduleHandler(ScheduleHandler):
     def __init__(self, bot: "SalomeBot"):
         super().__init__(bot)
 
-        self.channel_id = os.environ.get("DISCORD_CHANNEL_ID")
+        self.channel_id = os.environ["DISCORD_CHANNEL_ID"]
 
     def __call__(self) -> None:
-        if self.channel_id is None:
-            raise ValueError(
-                "Missing required environment variable: DISCORD_CHANNEL_ID"
-            )
-
         now = datetime.now(ZoneInfo("Asia/Tokyo"))
         weekday = now.weekday()
 

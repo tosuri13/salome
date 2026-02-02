@@ -23,6 +23,10 @@ MINECRAFT_SERVER_INSTANCE_ID = os.environ["MINECRAFT_SERVER_INSTANCE_ID"]
 MINECRAFT_SERVER_INSTANCE_REGION = os.environ["MINECRAFT_SERVER_INSTANCE_REGION"]
 MINECRAFT_SERVER_WORLD_NAME = os.environ["MINECRAFT_SERVER_WORLD_NAME"]
 
+FLYER_SHUFOO_USER_NAME = os.environ["FLYER_SHUFOO_USER_NAME"]
+FLYER_SHUFOO_SHOP_ID = os.environ["FLYER_SHUFOO_SHOP_ID"]
+FLYER_SHUFOO_REFERER = os.environ["FLYER_SHUFOO_REFERER"]
+
 
 class SalomeAppStack(Stack):
     def __init__(self, scope: Construct, id: str, **kwargs):
@@ -210,6 +214,27 @@ class SalomeAppStack(Stack):
             )
         )
 
+        salome_server_notify_flyer_function = _lambda.DockerImageFunction(
+            self,
+            "SalomeServerNotifyFlyerFunction",
+            code=_lambda.DockerImageCode.from_image_asset(
+                directory="../..",
+                cmd=["functions.server.notify.flyer.function.handler"],
+            ),
+            architecture=_lambda.Architecture.ARM_64,
+            function_name="salome-server-notify-flyer-function",
+            role=salome_function_role,  # type: ignore
+            timeout=cdk.Duration.minutes(5),
+            environment={
+                "DISCORD_APPLICATION_ID": DISCORD_APPLICATION_ID,
+                "DISCORD_BOT_TOKEN": DISCORD_BOT_TOKEN,
+                "DISCORD_CHANNEL_ID": DISCORD_CHANNEL_ID,
+                "FLYER_SHUFOO_USER_NAME": FLYER_SHUFOO_USER_NAME,
+                "FLYER_SHUFOO_SHOP_ID": FLYER_SHUFOO_SHOP_ID,
+                "FLYER_SHUFOO_REFERER": FLYER_SHUFOO_REFERER,
+            },
+        )
+
         salome_server_notify_garbage_function = _lambda.DockerImageFunction(
             self,
             "SalomeServerNotifyGarbageFunction",
@@ -239,6 +264,16 @@ class SalomeAppStack(Stack):
         )
 
         # 🐧 EventBridge Rules 🐧
+
+        events.Rule(
+            self,
+            "SalomeNotifyFlyerRule",
+            rule_name="salome-notify-flyer-rule",
+            schedule=events.Schedule.cron(hour="0", minute="0", week_day="MON"),
+            targets=[
+                events_targets.LambdaFunction(salome_server_notify_flyer_function),  # type: ignore
+            ],
+        )
 
         events.Rule(
             self,
