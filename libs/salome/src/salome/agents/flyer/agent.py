@@ -27,7 +27,7 @@ class SalomeFlyerAgent:
         self.ippt = 0.003
         self.ottp = 0.015
 
-    def run(self, flyer: bytes, debug: bool = False) -> SalomeFlyerAgentResult:
+    def run(self, flyers: list[bytes], debug: bool = False) -> SalomeFlyerAgentResult:
         agent = Agent(
             model=BedrockModel(
                 region_name=Config.DEFAULT_REGION_NAME,
@@ -41,15 +41,18 @@ class SalomeFlyerAgent:
         result = agent(
             [
                 {"text": self.user},
-                {
-                    "document": {
-                        "format": "pdf",
-                        "name": "Supermarket Flyer",
-                        "source": {
-                            "bytes": flyer,
+                *[
+                    {
+                        "document": {
+                            "format": "pdf",
+                            "name": f"Supermarket Flyer {idx + 1}",
+                            "source": {
+                                "bytes": flyer,
+                            },
                         },
-                    },
-                },
+                    }
+                    for idx, flyer in enumerate(flyers)
+                ],
             ]
         )
 

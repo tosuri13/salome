@@ -1,5 +1,4 @@
 import os
-import re
 from typing import TYPE_CHECKING
 
 import requests
@@ -37,35 +36,67 @@ class FlyerScheduleHandler(ScheduleHandler):
         response = response.json()
 
         shop = response["shop"]
-        flyers = shop["chirashis"]["chirashi"]
+        flyers: list[dict] = shop["chirashis"]["chirashi"]
 
-        agent = SalomeFlyerAgent()
-
-        for flyer in flyers:
-            if not re.search(r"\d{1,2}/\d{1,2}[～〜]\d{1,2}/\d{1,2}", flyer["title"]):
-                continue
-
-            date = flyer["insertTime"].split()[0]
-            pdf_url = f"https://ipqcache2.shufoo.net/c/{date}/c/{flyer['id']}/index/img/chirashi.pdf"
-
-            result = agent.run(requests.get(pdf_url).content)
-            cost = calc_inference_cost(result.usage, agent.ippt, agent.ottp)
-
+        if not flyers:
             self.bot.client.send_channel_message(
                 channel_id=self.channel_id,
                 embeds=[
                     {
-                        "title": "今週のチラシが届きましたわ〜！",
-                        "url": pdf_url,
+                        "title": "🥺 今週のチラシはまだ届いてないようですわ...",
                         "description": (
-                            f"{result.summary}\n"
-                            "\n"
-                            f"📅 **掲載期間**\n"
-                            f"{flyer['publishStartTime']} ～ {flyer['publishEndTime']}\n"
-                            "\n"
-                            f"> この通知で{cost}ドルいただきましたわ〜！"
+                            "今週分のチラシが見つかりませんでしたわ...日を空けて**公式サイト**を確認することをお勧めしますわ！\n"
+                            f"・https://www.shufoo.net/pntweb/shopDetail/{self.flyer_shuhoo_shop_id}"
                         ),
                         "color": Config.DEFAULT_DISCORD_EMBED_COLOR,
                     }
                 ],
             )
+            return
+
+        agent = SalomeFlyerAgent()
+
+        contents = []
+        flyer_embeds = []
+
+        for flyer in flyers:
+            date = flyer["insertTime"].split()[0]
+
+            pdf_url = f"https://ipqcache2.shufoo.net/c/{date}/c/{flyer['id']}/index/img/chirashi.pdf"
+            thumbnail_url = f"https://ipqcache2.shufoo.net/c/{date}/c/{flyer['id']}/index/img/thumb/thumb_l.jpg"
+
+            contents.append(requests.get(pdf_url).content)
+            flyer_embeds.append(
+                {
+                    "title": f"🛒 {flyer['title']}",
+                    "url": pdf_url,
+                    "fields": [
+                        {
+                            "name": "📅 掲載期間",
+                            "value": f"{flyer['publishStartTime']} ～ {flyer['publishEndTime']}",
+                            "inline": False,
+                        }
+                    ],
+                    "thumbnail": {"url": thumbnail_url},
+                    "color": Config.DEFAULT_DISCORD_EMBED_COLOR,
+                }
+            )
+
+        result = agent.run(contents)
+        cost = calc_inference_cost(result.usage, agent.ippt, agent.ottp)
+
+        self.bot.client.send_channel_message(
+            channel_id=self.channel_id,
+            embeds=[
+                *flyer_embeds,
+                {
+                    "title": "📑 今週のチラシまとめですわ！",
+                    "description": (
+                        f"{result.summary}\n"
+                        "\n"
+                        f"> この通知で{cost}ドルいただきましたわ〜！"
+                    ),
+                    "color": Config.DEFAULT_DISCORD_EMBED_COLOR,
+                },
+            ],
+        )
