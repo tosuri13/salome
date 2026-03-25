@@ -1,5 +1,6 @@
 import aws_cdk as cdk
-from stacks.salome_app import SalomeAppStack
+
+from stacks.app import SalomeAppStack
 
 app = cdk.App()
 

@@ -1,7 +1,7 @@
 class Config:
     DEFAULT_REGION_NAME = "ap-northeast-1"
 
-    DEFAULT_GENERATIVE_MODEL_ID = "jp.anthropic.claude-haiku-4-5-20251001-v1:0"
+    DEFAULT_GENERATIVE_MODEL_ID = "global.anthropic.claude-haiku-4-5-20251001-v1:0"
     DEFAULT_GENERATIVE_MODEL_IPPT = 0.001
     DEFAULT_GENERATIVE_MODEL_OPPT = 0.005
 
