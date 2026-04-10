@@ -269,7 +269,7 @@ class SalomeAppStack(Stack):
             self,
             "SalomeNotifyFlyerRule",
             rule_name="salome-notify-flyer-rule",
-            schedule=events.Schedule.cron(hour="0", minute="0", week_day="MON"),
+            schedule=events.Schedule.cron(hour="3", minute="0", week_day="MON"),
             targets=[
                 events_targets.LambdaFunction(salome_server_notify_flyer_function),  # type: ignore
             ],
