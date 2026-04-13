@@ -1,5 +1,5 @@
 {
-  "app": "uv run app.py",
+  "app": "rm -rf cdk.out && uv run app.py",
   "watch": {
     "include": [
       "**"

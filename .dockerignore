@@ -1,24 +1,7 @@
-# Python
-.venv
-**/__pycache__
-**/*.pyc
-**/.pytest_cache
+*
 
-# Git
-.git
-.gitignore
+!pyproject.toml
+!uv.lock
 
-# AWS CDK
-**/cdk.out
-**/cdk.json
-**/cdk.context.json
-
-# Modules
-libs/salome-cdk
-libs/salome-tool
-
-# Environment
-.env
-
-# Documentation
-README.md
+!apps/
+!libs/salome/
