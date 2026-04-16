@@ -1,3 +1,4 @@
+import json
 from typing import Any
 
 import requests
@@ -35,14 +36,38 @@ class DiscordClient:
         self,
         channel_id: str,
         embeds: list[dict[str, Any]],
+        files: list[tuple[str, bytes]] | None = None,
     ):
-        response = requests.post(
-            f"{DISCORD_API_BASEURL}/channels/{channel_id}/messages",
-            headers=self._headers,
-            json={
-                "embeds": embeds,
-            },
-        )
+        if files:
+            response = requests.post(
+                f"{DISCORD_API_BASEURL}/channels/{channel_id}/messages",
+                headers={
+                    "Authorization": f"Bot {self.bot_token}",
+                },
+                data={
+                    "payload_json": json.dumps(
+                        {
+                            "embeds": embeds,
+                            "attachments": [
+                                {"id": i, "filename": name}
+                                for i, (name, _) in enumerate(files)
+                            ],
+                        }
+                    ),
+                },
+                files={
+                    f"files[{i}]": (name, data, "application/octet-stream")
+                    for i, (name, data) in enumerate(files)
+                },
+            )
+        else:
+            response = requests.post(
+                f"{DISCORD_API_BASEURL}/channels/{channel_id}/messages",
+                headers=self._headers,
+                json={
+                    "embeds": embeds,
+                },
+            )
 
         if response.status_code != 200:
             raise ValueError(f"Discord API failed: {response.text}")

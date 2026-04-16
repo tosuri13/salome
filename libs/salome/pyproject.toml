@@ -6,14 +6,16 @@ dependencies = [
     "boto3>=1.42.30",
     "discord-interactions>=0.4.0",
     "faiss-cpu>=1.13.2",
+    "matplotlib>=3.10",
     "numpy>=2.4.1",
+    "pandas>=2.3",
     "requests>=2.32.5",
     "strands-agents>=1.23.0",
 ]
 
 [dependency-groups]
 dev = [
-    "boto3-stubs[bedrock-runtime,s3vectors,sns]>=1.42.30",
+    "boto3-stubs[bedrock-runtime,dynamodb,s3vectors,sns]>=1.42.30",
 ]
 
 [build-system]

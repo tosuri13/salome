@@ -27,6 +27,8 @@ FLYER_SHUFOO_USER_NAME = os.environ["FLYER_SHUFOO_USER_NAME"]
 FLYER_SHUFOO_SHOP_ID = os.environ["FLYER_SHUFOO_SHOP_ID"]
 FLYER_SHUFOO_REFERER = os.environ["FLYER_SHUFOO_REFERER"]
 
+LAZYCAM_RECORDS_TABLE_NAME = os.environ["LAZYCAM_RECORDS_TABLE_NAME"]
+
 
 class SalomeAppStack(Stack):
     def __init__(self, scope: Construct, id: str, **kwargs):
@@ -82,6 +84,7 @@ class SalomeAppStack(Stack):
                             actions=[
                                 "bedrock:InvokeModel",
                                 "bedrock:InvokeModelWithResponseStream",
+                                "dynamodb:Query",
                                 "ec2:DescribeInstances",
                                 "ec2:StartInstances",
                                 "ec2:StopInstances",
@@ -253,6 +256,25 @@ class SalomeAppStack(Stack):
             },
         )
 
+        salome_server_notify_laziness_function = _lambda.DockerImageFunction(
+            self,
+            "SalomeServerNotifyLazinessFunction",
+            code=_lambda.DockerImageCode.from_image_asset(
+                directory="../..",
+                cmd=["functions.server.notify.laziness.function.handler"],
+            ),
+            architecture=_lambda.Architecture.ARM_64,
+            function_name="salome-server-notify-laziness-function",
+            role=salome_function_role,  # type: ignore
+            timeout=cdk.Duration.minutes(5),
+            environment={
+                "DISCORD_APPLICATION_ID": DISCORD_APPLICATION_ID,
+                "DISCORD_BOT_TOKEN": DISCORD_BOT_TOKEN,
+                "DISCORD_CHANNEL_ID": DISCORD_CHANNEL_ID,
+                "LAZYCAM_RECORDS_TABLE_NAME": LAZYCAM_RECORDS_TABLE_NAME,
+            },
+        )
+
         # 🐧 API Gateway & Integration 🐧
 
         salome_api = apigw.LambdaRestApi(
@@ -282,5 +304,15 @@ class SalomeAppStack(Stack):
             schedule=events.Schedule.cron(hour="22", minute="50"),
             targets=[
                 events_targets.LambdaFunction(salome_server_notify_garbage_function),  # type: ignore
+            ],
+        )
+
+        events.Rule(
+            self,
+            "SalomeNotifyLazinessRule",
+            rule_name="salome-notify-laziness-rule",
+            schedule=events.Schedule.cron(hour="3", minute="0"),
+            targets=[
+                events_targets.LambdaFunction(salome_server_notify_laziness_function),  # type: ignore
             ],
         )

@@ -2,6 +2,7 @@ from salome.bot.handlers import (
     AskCommandHandler,
     FlyerScheduleHandler,
     GarbageScheduleHandler,
+    LazinessScheduleHandler,
     MinecraftCommandHandler,
     RecipeCommandHandler,
 )
@@ -31,3 +32,7 @@ class SalomeBot:
     @property
     def garbage(self) -> GarbageScheduleHandler:
         return GarbageScheduleHandler(self)
+
+    @property
+    def laziness(self) -> LazinessScheduleHandler:
+        return LazinessScheduleHandler(self)

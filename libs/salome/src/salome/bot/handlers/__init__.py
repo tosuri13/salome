@@ -1,5 +1,5 @@
 from .command import AskCommandHandler, MinecraftCommandHandler, RecipeCommandHandler
-from .schedule import FlyerScheduleHandler, GarbageScheduleHandler
+from .schedule import FlyerScheduleHandler, GarbageScheduleHandler, LazinessScheduleHandler
 
 __all__ = [
     "AskCommandHandler",
@@ -7,4 +7,5 @@ __all__ = [
     "RecipeCommandHandler",
     "FlyerScheduleHandler",
     "GarbageScheduleHandler",
+    "LazinessScheduleHandler",
 ]

@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
     console.print("🤖 AIがチラシを分析中...", style="yellow")
     agent = SalomeFlyerAgent()
-    result = agent.run(content, debug)
+    result = agent.run([content], debug)
 
     console.print(
         Panel(
