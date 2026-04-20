@@ -122,7 +122,7 @@ class SalomeAppStack(Stack):
             ),
             architecture=_lambda.Architecture.ARM_64,
             function_name="salome-api-function",
-            memory_size=512,
+            memory_size=1024,
             role=salome_function_role,  # type: ignore
             timeout=cdk.Duration.minutes(5),
             environment={
@@ -140,6 +140,7 @@ class SalomeAppStack(Stack):
             ),
             architecture=_lambda.Architecture.ARM_64,
             function_name="salome-server-interact-ask-function",
+            memory_size=512,
             role=salome_function_role,  # type: ignore
             timeout=cdk.Duration.minutes(5),
             environment={
@@ -167,6 +168,7 @@ class SalomeAppStack(Stack):
             ),
             architecture=_lambda.Architecture.ARM_64,
             function_name="salome-server-interact-minecraft-function",
+            memory_size=512,
             role=salome_function_role,  # type: ignore
             timeout=cdk.Duration.minutes(5),
             environment={
@@ -198,6 +200,7 @@ class SalomeAppStack(Stack):
             ),
             architecture=_lambda.Architecture.ARM_64,
             function_name="salome-server-interact-recipe-function",
+            memory_size=512,
             role=salome_function_role,  # type: ignore
             timeout=cdk.Duration.minutes(5),
             environment={
@@ -226,6 +229,7 @@ class SalomeAppStack(Stack):
             ),
             architecture=_lambda.Architecture.ARM_64,
             function_name="salome-server-notify-flyer-function",
+            memory_size=512,
             role=salome_function_role,  # type: ignore
             timeout=cdk.Duration.minutes(5),
             environment={
@@ -247,6 +251,7 @@ class SalomeAppStack(Stack):
             ),
             architecture=_lambda.Architecture.ARM_64,
             function_name="salome-server-notify-garbage-function",
+            memory_size=512,
             role=salome_function_role,  # type: ignore
             timeout=cdk.Duration.minutes(5),
             environment={
@@ -265,6 +270,7 @@ class SalomeAppStack(Stack):
             ),
             architecture=_lambda.Architecture.ARM_64,
             function_name="salome-server-notify-laziness-function",
+            memory_size=512,
             role=salome_function_role,  # type: ignore
             timeout=cdk.Duration.minutes(5),
             environment={

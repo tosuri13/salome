@@ -59,9 +59,13 @@ if __name__ == "__main__":
     ]
     df = pd.DataFrame(points).sort_values("timestamp")
 
+    is_evening = df["timestamp"].dt.hour >= 18
+    day_rate = df.loc[~is_evening, "is_in_bed"].mean() * 100 if (~is_evening).any() else 0
+    evening_rate = df.loc[is_evening, "is_in_bed"].mean() * 100 if is_evening.any() else 0
+    in_bed_rate = min(evening_rate * 0.9 + day_rate * 0.3, 100)
+
     count_b = df["is_in_bed"].sum()
     count_t = len(df)
-    in_bed_rate = (count_b / count_t) * 100
 
     match in_bed_rate:
         case r if r < 20:

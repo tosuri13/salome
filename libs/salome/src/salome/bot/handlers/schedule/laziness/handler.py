@@ -65,10 +65,10 @@ class LazinessScheduleHandler(ScheduleHandler):
         ]
         df = pd.DataFrame(points).sort_values("timestamp")
 
+        in_bed_rate = self._calc_in_bed_rate(df)
+
         count_b = df["is_in_bed"].sum()
         count_t = len(df)
-
-        in_bed_rate = (count_b / count_t) * 100
 
         match in_bed_rate:
             case r if r < 20:
@@ -97,7 +97,7 @@ class LazinessScheduleHandler(ScheduleHandler):
                 f"ゴロゴロ度: {in_bed_rate:.1f}% ({label})\n"
                 f"ベッド滞在時間: {hours_b}時間{mins_b}分 / 監視時間: {hours_t}時間{mins_t}分"
             ),
-            chart=chart_image,
+            chart_image=chart_image,
         )
         comment = result.comment
 
@@ -130,6 +130,17 @@ class LazinessScheduleHandler(ScheduleHandler):
             files=[("laziness.png", chart_image)],
         )
 
+    def _calc_in_bed_rate(self, df: pd.DataFrame) -> float:
+        is_evening = df["timestamp"].dt.hour >= 18
+
+        day_mean = df.loc[~is_evening, "is_in_bed"].mean()
+        day_rate = day_mean * 100 if (~is_evening).any() else 0
+
+        evening_mean = df.loc[is_evening, "is_in_bed"].mean()
+        evening_rate = evening_mean * 100 if is_evening.any() else 0
+
+        return min(day_rate * 0.3 + evening_rate * 0.9, 100)
+
     def _render_chart(self, df: pd.DataFrame) -> bytes:
         fig, ax = plt.subplots(figsize=(10, 2))
 
@@ -143,7 +154,9 @@ class LazinessScheduleHandler(ScheduleHandler):
         ax.set_yticks([0, 1])
         ax.set_yticklabels(["Active", "In Bed"])
         ax.set_xlim(df["timestamp"].min(), df["timestamp"].max())
-        ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M", tz=ZoneInfo("Asia/Tokyo")))
+        ax.xaxis.set_major_formatter(
+            mdates.DateFormatter("%H:%M", tz=ZoneInfo("Asia/Tokyo"))
+        )
 
         fig.tight_layout()
 
